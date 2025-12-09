@@ -1,0 +1,1 @@
+{"name":"educatex-backend","version":"1.0.0","description":"API REST for EDUCATEX","main":"server.js","scripts":{"start":"node server.js"},"dependencies":{"bcryptjs":"*","cors":"*","dotenv":"*","express":"*","jsonwebtoken":"*","pg":"*","svg-captcha":"^1.4.0"}}

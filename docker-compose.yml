@@ -1,0 +1,72 @@
+version: '3.8'
+
+services:
+  # 1. SERVICIO DE BASE DE DATOS: PostgreSQL
+  db:
+    image: postgres:15-alpine
+    container_name: educatex-db
+    restart: always
+    
+    # Variables que PostgreSQL usa para crear la DB y el superusuario.
+    # Estos valores DEBEN coincidir con los que tienes en tu .env del backend.
+    environment:
+      POSTGRES_USER: ${DB_USER}       
+      POSTGRES_PASSWORD: ${DB_PASS}   
+      POSTGRES_DB: ${DB_NAME}         
+
+    # 💾 Inicialización de la DB y persistencia de datos
+    volumes:
+      # CRÍTICO: Ejecuta tu script SQL para crear las tablas al iniciar el contenedor por primera vez.
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+      # Persistencia de los datos reales de la DB
+      - postgres_data:/var/lib/postgresql/data
+    
+    # Expone el puerto 5432 del contenedor al host para acceso local opcional
+    ports:
+      - "5432:5432" 
+
+  # 2. SERVICIO DE BACKEND: Node.js/Express
+  backend:
+    # 🏭 Indica a Docker Compose que construya la imagen usando el Dockerfile en ./backend
+    build: 
+      context: ./backend              # Ruta donde está el código fuente y el Dockerfile
+      dockerfile: Dockerfile
+    container_name: educatex-backend
+    restart: always
+    
+    # 🔑 CARGA DE VARIABLES DE ENTORNO
+    # Lee todas las variables desde el archivo .env DENTRO de la carpeta backend
+    env_file: 
+      - ./backend/.env  
+
+    # Variables de entorno adicionales / sobrescritas
+    environment:
+      NODE_ENV: development
+      PORT: 5000
+      # ⚠️ CRÍTICO: El host de la DB es el nombre del servicio (db) dentro de la red de Docker.
+      DB_HOST: db                    
+    
+    # Expone el puerto 5000 del contenedor al host
+    ports:
+      - "5000:5000"
+      
+    # Asegura que la DB se inicie antes que el Backend
+    depends_on:
+      - db                           
+
+  # 3. SERVICIO DE FRONTEND: React/Vite con Nginx
+  frontend:
+    # 🏭 Indica a Docker Compose que construya la imagen usando el Dockerfile en ./frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: educatex-frontend
+    restart: always
+    
+    # Expone el puerto 80 de Nginx del contenedor al puerto 80 del host
+    ports:
+      - "80:80"
+
+# 💾 Definición de volúmenes para persistir los datos de PostgreSQL
+volumes:
+  postgres_data:
