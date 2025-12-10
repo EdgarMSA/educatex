@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from '../api/client';
 import { Link, useNavigate } from 'react-router-dom';
 
 const MisCursos = () => {
@@ -16,7 +16,7 @@ const MisCursos = () => {
 
         const fetchEnrolledCourses = async () => {
             try {
-                const res = await axios.get('http://localhost:5000/api/profile/courses', {
+                const res = await api.get('/profile/courses', {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 setCourses(res.data);

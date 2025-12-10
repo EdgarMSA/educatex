@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from '../api/client';
 import { useNavigate } from 'react-router-dom';
 
 const Profile = () => {
@@ -18,7 +18,7 @@ const Profile = () => {
     }
 
     // 2. Intentar obtener el perfil
-    axios.get('http://localhost:5000/api/profile', {
+    api.get('/profile', {
       headers: { Authorization: `Bearer ${token}` } // IMPORTANTE: El espacio después de Bearer
     })
     .then(res => {
@@ -39,7 +39,7 @@ const Profile = () => {
     e.preventDefault();
     try {
       const token = localStorage.getItem('token');
-      await axios.put('http://localhost:5000/api/profile/password', passData, {
+      await api.put('/profile/password', passData, {
         headers: { Authorization: `Bearer ${token}` }
       });
       alert('Contraseña actualizada con éxito');

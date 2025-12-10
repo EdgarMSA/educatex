@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api/client';
 import { toast } from 'react-hot-toast';
 
 const AdminDashboard = () => {
@@ -27,10 +27,10 @@ const AdminDashboard = () => {
     // --- 1. CARGA INICIAL DE DATOS ---
     const fetchData = async () => {
         try {
-            const resCourses = await axios.get('http://localhost:5000/api/courses');
+            const resCourses = await api.get('/courses');
             setCourses(resCourses.data);
             
-            const resPayments = await axios.get('http://localhost:5000/api/enrollments/pending', config);
+            const resPayments = await api.get('/enrollments/pending', config);
             setPendingPayments(resPayments.data);
         } catch (err) { 
             console.error(err);
@@ -50,11 +50,11 @@ const AdminDashboard = () => {
         try {
             if (courseForm.id) {
                 // MODO EDICIÓN (PUT)
-                await axios.put(`http://localhost:5000/api/courses/${courseForm.id}`, courseForm, config);
+                await api.put(`/courses/${courseForm.id}`, courseForm, config);
                 toast.success('Curso actualizado correctamente');
             } else {
                 // MODO CREACIÓN (POST)
-                await axios.post('http://localhost:5000/api/courses', courseForm, config);
+                await api.post('/courses', courseForm, config);
                 toast.success('🚀 Curso creado con éxito!');
             }
             // Limpiar y recargar
@@ -82,7 +82,7 @@ const AdminDashboard = () => {
     const handleDeleteCourse = async (id) => {
         if(!window.confirm("¿ESTÁS SEGURO? Se borrarán todos los módulos y videos de este curso.")) return;
         try {
-            await axios.delete(`http://localhost:5000/api/courses/${id}`, config);
+            await api.delete(`/courses/${id}`, config);
             toast.success('Curso eliminado');
             fetchData();
             if(selectedCourse?.id === id) { setSelectedCourse(null); setCourseDetails(null); }
@@ -105,7 +105,7 @@ const AdminDashboard = () => {
                         toast.dismiss(t.id);
                         try {
                             const loading = toast.loading("Procesando...");
-                            await axios.put(`http://localhost:5000/api/enrollments/approve/${enrollmentId}`, {}, config);
+                            await api.put(`/enrollments/approve/${enrollmentId}`, {}, config);
                             toast.dismiss(loading);
                             toast.success("✅ Acceso concedido.");
                             fetchData();
@@ -122,7 +122,7 @@ const AdminDashboard = () => {
         setSelectedCourse(course);
         setEditingVideo(null);
         try {
-            const res = await axios.get(`http://localhost:5000/api/courses/${course.id}`, config);
+            const res = await api.get(`/courses/${course.id}`, config);
             setCourseDetails(res.data);
             setTimeout(() => window.scrollTo({ top: 800, behavior: 'smooth' }), 100);
         } catch (err) { console.error(err); }
@@ -131,7 +131,7 @@ const AdminDashboard = () => {
     const handleAddModule = async (e) => {
         e.preventDefault();
         try {
-            await axios.post(`http://localhost:5000/api/courses/${selectedCourse.id}/modules`, { title: newModule.title, order: courseDetails.modules.length + 1 }, config);
+            await api.post(`/courses/${selectedCourse.id}/modules`, { title: newModule.title, order: courseDetails.modules.length + 1 }, config);
             setNewModule({ title: '' });
             toast.success('Módulo agregado');
             handleManageCourse(selectedCourse);
@@ -141,7 +141,7 @@ const AdminDashboard = () => {
     const handleAddVideo = async (e, moduleId) => {
         e.preventDefault();
         try {
-            await axios.post(`http://localhost:5000/api/modules/${moduleId}/videos`, { title: newVideo.title, video_url: newVideo.video_url, order: 1 }, config);
+            await api.post(`/modules/${moduleId}/videos`, { title: newVideo.title, video_url: newVideo.video_url, order: 1 }, config);
             setNewVideo({ title: '', video_url: '', module_id: null });
             toast.success('Video agregado');
             handleManageCourse(selectedCourse);
@@ -156,7 +156,7 @@ const AdminDashboard = () => {
         e.preventDefault();
         if (!editingVideo) return;
         try {
-            await axios.put(`http://localhost:5000/api/videos/${editingVideo.id}`, { title: editingVideo.title, video_url: editingVideo.video_url }, config);
+            await api.put(`/videos/${editingVideo.id}`, { title: editingVideo.title, video_url: editingVideo.video_url }, config);
             toast.success('Video actualizado');
             setEditingVideo(null);
             handleManageCourse(selectedCourse);
@@ -169,7 +169,7 @@ const AdminDashboard = () => {
     const handleDeleteVideo = async (videoId) => {
         if (!window.confirm("¿Eliminar video irreversiblemente?")) return;
         try {
-            await axios.delete(`http://localhost:5000/api/videos/${videoId}`, config);
+            await api.delete(`/videos/${videoId}`, config);
             toast.success('Video eliminado');
             handleManageCourse(selectedCourse);
         } catch (err) { toast.error('Error al eliminar'); }

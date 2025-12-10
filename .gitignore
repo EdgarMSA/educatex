@@ -1,0 +1,33 @@
+# ----------------------------------------------------
+# ARCHIVOS CRÍTICOS Y SENSIBLES (NO deben subir a GitHub)
+# ----------------------------------------------------
+
+# Variables de entorno (Contienen claves, passwords, etc.)
+.env
+/backend/.env
+/frontend/.env
+
+# ----------------------------------------------------
+# DEPENDENCIAS (Generadas al ejecutar 'npm install')
+# ----------------------------------------------------
+/node_modules
+/backend/node_modules
+/frontend/node_modules
+# Archivos de caché del gestor de paquetes
+package-lock.json
+
+# ----------------------------------------------------
+# ARCHIVOS DE BUILD Y CACHÉ DEL ENTORNO DE DESARROLLO
+# ----------------------------------------------------
+
+# Archivos de caché de Vite
+.vite/
+/frontend/.vite/
+
+# Output de compilación (Frontend)
+/dist
+/frontend/dist
+
+# Logs y errores de Node
+npm-debug.log*
+yarn-debug.log*

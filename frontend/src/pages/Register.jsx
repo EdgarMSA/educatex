@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'; // 👈 Importa useEffect
-import axios from 'axios';
+import api from '../api/client';
 import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 
@@ -19,7 +19,7 @@ const Register = () => {
   // --- FUNCIÓN PARA CARGAR EL CAPTCHA ---
   const fetchCaptcha = async () => {
     try {
-        const res = await axios.get('http://localhost:5000/api/auth/captcha');
+        const res = await api.get('/auth/captcha');
         setCaptchaData(res.data);
         // Limpiamos el input del usuario por si acaso
         setFormData(prev => ({ ...prev, captchaAnswer: '' }));
@@ -36,32 +36,12 @@ const Register = () => {
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-  /* 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      // Enviamos también el token del captcha
-      const res = await axios.post('http://localhost:5000/api/auth/register', {
-          ...formData,
-          captchaToken: captchaData.token 
-      });
-      
-      localStorage.setItem('token', res.data.token);
-      localStorage.setItem('user', JSON.stringify(res.data.user));
-      toast.success('¡Registro exitoso! Bienvenido.');
-      navigate('/');
-      window.location.reload();
-    } catch (err) {
-      toast.error(err.response?.data?.message || 'Error en el registro');
-      fetchCaptcha(); // Si falla, recargamos el captcha para que intente con uno nuevo
-    }
-  };
-  */
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       // Enviamos datos + token del captcha
-      const res = await axios.post('http://localhost:5000/api/auth/register', {
+      const res = await api.post('/auth/register', {
           ...formData,
           captchaToken: captchaData.token 
       });

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom'; // 👈 Importamos Link
 import { toast } from 'react-hot-toast';
-import axios from 'axios';
+import api from '../api/client';
 import YouTube from 'react-youtube'; 
 import CheckoutModal from '../components/CheckoutModal'; 
 
@@ -29,7 +29,7 @@ const CourseDetails = () => {
     const fetchCourse = async () => {
         try {
             const headers = token ? { Authorization: `Bearer ${token}` } : {};
-            const res = await axios.get(`http://localhost:5000/api/courses/${id}`, { headers });
+            const res = await api.get(`/courses/${id}`, { headers });
             
             setData(res.data);
             setError(null);
@@ -66,7 +66,7 @@ const CourseDetails = () => {
     const handleMarkSeen = async () => {
         if (!activeVideo) return;
         try {
-            await axios.put(`http://localhost:5000/api/progress/video/${activeVideo.id}`, {}, {
+            await api.put(`/progress/video/${activeVideo.id}`, {}, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             fetchCourse(); 

@@ -7,8 +7,12 @@ const apiRoutes = require('./routes/apiRoutes');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+const allowedOrigin = process.env.FRONTEND_URL || 'http://localhost:5173';
 // Middlewares
-app.use(cors({ origin: 'http://localhost:5173' })); // Permitir acceso desde el frontend de React
+app.use(cors({ 
+    origin: allowedOrigin,
+    credentials: true,
+ })); // Permitir acceso desde el frontend de React
 app.use(express.json()); 
 
 // Rutas de la API

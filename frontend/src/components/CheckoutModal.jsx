@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import api from '../api/client';
+
+
 
 const CheckoutModal = ({ course, userPoints, onClose, onEnrollmentSuccess }) => {
     const [paymentMethod, setPaymentMethod] = useState('');
@@ -21,7 +23,7 @@ const CheckoutModal = ({ course, userPoints, onClose, onEnrollmentSuccess }) => 
 
         try {
             const token = localStorage.getItem('token');
-            const res = await axios.post('http://localhost:5000/api/enrollments/buy', {
+            const res = await api.post('/enrollments/buy', {
                 courseId: course.id,
                 paymentMethod,
                 paymentProofUrl: proofUrl
