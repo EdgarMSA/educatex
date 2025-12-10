@@ -2,8 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom'; // 👈 Importamos Link
 import { toast } from 'react-hot-toast';
 import api from '../api/client';
-//import YouTube from 'react-youtube'; 
-import VideoPlayer from "../components/VideoPlayer";
+import YouTube from 'react-youtube'; 
 import CheckoutModal from '../components/CheckoutModal'; 
 
 const CourseDetails = () => {
@@ -112,16 +111,12 @@ const CourseDetails = () => {
                             {activeVideo ? (
                                 <div className="w-full h-full">
                                     {getYouTubeID(activeVideo.video_url || activeVideo.url) ? (
-                                        /*<YouTube 
+                                        <YouTube 
                                             videoId={getYouTubeID(activeVideo.video_url || activeVideo.url)} 
                                             opts={opts} 
                                             onEnd={handleMarkSeen}
                                             className="w-full h-full"
                                             iframeClassName="w-full h-full"
-                                        />*/
-                                        <VideoPlayer
-                                            url={activeVideo.video_url || activeVideo.url}
-                                            onEnd={handleMarkSeen}
                                         />
                                     ) : (
                                         <div className="flex items-center justify-center h-full text-red-400">Video no compatible</div>
